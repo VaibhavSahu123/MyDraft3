@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="occupation">
+        <item>Doctor</item>
+        <item>IT Engineer </item>
+        <item>Student</item>
+        <item>Advocate</item>
+        <item>HouseWife</item>
+        <item>Business Man</item>
+        <item>None</item>
+        <item>Select Occupation</item>
+
+    </string-array>
+    <string-array name="interest">
+        <item>Select Interest</item>
+        <item>Social Work</item>
+        <item>Stamp Collection</item>
+        <item>Surfing</item>
+        <item>Listening Music</item>
+        <item>Gossiping</item>
+        <item>Shopping</item>
+        <item>None</item>
+
+    </string-array>
+    <string-array name="hobbies">
+        <item>Select Hobbies</item>
+        <item>Music</item>
+        <item>Traveling</item>
+        <item>Fishing</item>
+        <item>Hunting</item>
+        <item>Reading</item>
+        <item>None</item>
+    </string-array>
+
+    <string-array name="Religion">
+        <item>Select Religion</item>
+        <item>Hinduism</item>
+        <item>Jainism</item>
+        <item>Islam</item>
+        <item>Christianity</item>
+        <item>Buddhism</item>
+        <item>Other religions</item>
+    </string-array>
+
+    <string-array name="Country">
+        <item>Select Country</item>
+        <item>Russia</item>
+        <item>Canada </item>
+        <item>USA</item>
+        <item>India</item>
+        <item>China</item>
+        <item>Australia</item>
+        <item>Brazil</item>
+        <item>Argentina</item>
+        <item>Other</item>
+    </string-array>
+<string-array name="Knowing">
+    <item>Select How do you Know him?</item>
+    <item>School/Colledge</item>
+    <item>Neighbour</item>
+    <item>Work/Business</item>
+    <item>From Other Reference</item>
+    <item>Remote Friend</item>
+    <item>Social Media</item>
+    <item>Institute</item>
+</string-array>
+<string-array name="Closeness">
+    <item>Select How Close you are?</item>
+    <item>Very Close</item>
+    <item>Close</item>
+    <item>Intermittently Close</item>
+    <item>Not Close</item>
+</string-array>
+<string-array name="Communication">
+    <item>Select Often you communicate With Him?</item>
+    <item>Yearly</item>
+    <item>Monthly</item>
+    <item>Weakly</item>
+    <item>Once a Day</item>
+    <item>More then Once a day</item>
+</string-array>
+
+<string-array name="Communication_Topic">
+    <item>Select Communication Topic with him?</item>
+    <item>Music</item>
+    <item>Traveling</item>
+    <item>Fishing</item>
+    <item>Hunting</item>
+    <item>Reading</item>
+    <item>Social Work</item>
+    <item>Stamp Collection</item>
+    <item>Surfing</item>
+    <item>Listening Music</item>
+    <item>Gossiping</item>
+    <item>Shopping</item>
+    <item>Politics</item>
+    <item>Movie</item>
+    <item>Jokes</item>
+    <item>Relationship</item>
+    <item>Music</item>
+    <item>Other</item>
+</string-array>
+
+</resources>

@@ -1,0 +1,29 @@
+
+<resources>
+    <string name="app_name">MyRelationTracker</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">UserName</string>
+    <string name="prompt_password">Password </string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="first_Name">First Name</string>
+    <string name="last_Name">Last Name</string>
+    <string name="occupation">Select</string>
+    <string name="gender">Select</string>
+    <string name="UserName">UserName</string>
+    <string name="Password">Password</string>
+    <string name="Chose_UserName">Your UserName</string>
+    <string name="Chose_Password">Your Password</string>
+
+    <string name="action_sign_up">Sign UP!</string>
+
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="action_sign_in_short">signin</string>
+    <string name="completion">What would you like to do ?</string>
+    <string name="end_test">END QUIZ</string>
+
+
+</resources>
+
