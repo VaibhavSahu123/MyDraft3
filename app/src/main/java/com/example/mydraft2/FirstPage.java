@@ -65,7 +65,7 @@ public class FirstPage extends AppCompatActivity
         public void onClick(View v) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("Pick Profile ");
-            final List<String> profilesList = dbUtility.getProfileNames();
+            final List<String> profilesList = dbUtility.getProfileNames(false);//Don't need to have entry in result i.e false
             // If profile has no name ask user to create profile first
             if (profilesList.isEmpty())
             {
@@ -114,10 +114,26 @@ public class FirstPage extends AppCompatActivity
 
         @Override
         public void onClick(View v) {
-            //overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
-            startActivity(intent);
-
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Pick Profile for which you want to see Result");
+            final List<String> profilesList = dbUtility.getProfileNames(true); // Must have entry in Result table i.e true
+            if (profilesList.isEmpty())
+            {
+                createProfileAlert();
+            }
+            else {
+                builder.setItems(profilesList.toArray(new String[profilesList.size()]), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Code to perform action here
+                        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                        Log.d("FirstPage", "Selected profile is " + profilesList.get(which));
+                        intent.putExtra("SelectedProfile", profilesList.get(which));
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
+            }
         }
     }
 }

@@ -14,7 +14,6 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**
  * Created by dikki on 03/12/2016.
@@ -25,8 +24,7 @@ public class SignUp extends AppCompatActivity  {
     Button btnSave ;
     EditText edtFirstName ,edtLastName , edtSelectedUserName, edtSelectedPassword ;
     RadioButton rdtMale, rdtFemale ;
-    Spinner spnHobbeis,spnInterest,spnReligion,spnCountry;
-    MaterialBetterSpinner spnOccupation;
+    Spinner spnHobbeis,spnInterest,spnReligion,spnCountry,spnOccupation;
     final DbUtility dbUtility = new DbUtility();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,26 +39,16 @@ public class SignUp extends AppCompatActivity  {
         rdtMale = (RadioButton) findViewById(R.id.radioBtnMale);
         rdtFemale = (RadioButton) findViewById(R.id.radioBtnfemale);
 
-        spnOccupation = (MaterialBetterSpinner) findViewById(R.id.spinOccupation);
+        spnOccupation = (Spinner) findViewById(R.id.spinOccupation);
         spnHobbeis = (Spinner) findViewById(R.id.spinHobbies);
         spnInterest = (Spinner) findViewById(R.id.spinInterest);
         spnCountry = (Spinner) findViewById(R.id.spinCountry);
         spnReligion = (Spinner) findViewById(R.id.spinReligion);
 
-       ArrayAdapter<CharSequence> adptOccupation = ArrayAdapter.createFromResource(this,R.array.occupation,android.R.layout.simple_spinner_item);
-       /* ArrayAdapter<CharSequence> adptOccupation = new ArrayAdapter<CharSequence>(this,android.R.layout.simple_spinner_item)
-        {
-            @Override
-            public int getCount() {
-                return super.getCount()-1; // you dont display last item. It is used as hint.
-            }
-        };*/
+        ArrayAdapter<CharSequence> adptOccupation = ArrayAdapter.createFromResource(this,R.array.occupation,android.R.layout.simple_spinner_item);
         adptOccupation.setDropDownViewResource(android.R.layout.select_dialog_item);
-       // adptOccupation.addAll(getResources().getStringArray(R.array.occupation));
-
-        //spnOccupation.setPrompt("Select occupation");
         spnOccupation.setAdapter(adptOccupation);
-       // spnOccupation.setSelection(adptOccupation.getCount());
+
 
         ArrayAdapter<CharSequence> adptInterest = ArrayAdapter.createFromResource(this,R.array.interest,android.R.layout.simple_spinner_item);
         adptInterest.setDropDownViewResource(android.R.layout.select_dialog_item);
@@ -85,13 +73,13 @@ public class SignUp extends AppCompatActivity  {
             public void onClick(View v) {
                 String firstName;
                 String lastName;
-                Editable occupation;
+                String occupation;
                 String gender;
                 String userName;
                 String password;
                 firstName = edtFirstName.getText().toString();
                 lastName = edtLastName.getText().toString();
-               occupation = spnOccupation.getText();
+                occupation = spnOccupation.getSelectedItem().toString();
 
                 if(rdtMale.isChecked())
                     gender ="Male";
@@ -101,7 +89,7 @@ public class SignUp extends AppCompatActivity  {
                 userName = edtSelectedUserName.getText().toString();
                 password = edtSelectedPassword.getText().toString();
 
-                dbUtility.insertUserDetails(firstName,lastName,occupation.toString(),gender,userName,password);
+                dbUtility.insertUserDetails(firstName,lastName,occupation,gender,userName,password);
 
                 Toast.makeText(SignUp.this, "User Account Created Successfully ", Toast.LENGTH_SHORT).show();
 

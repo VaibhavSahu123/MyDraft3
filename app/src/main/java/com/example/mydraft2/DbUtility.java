@@ -117,11 +117,15 @@ public class DbUtility
         //Toast.makeText()
     }
 
-    public List<String> getProfileNames()
+    public List<String> getProfileNames(boolean isEntryInResultTableReq)
     {
         List<String> ProfileName = new ArrayList<String>();
 
         String Query = "SELECT " + FIRSTNAME + " FROM " + PROFILETABLE ;
+        if (isEntryInResultTableReq)
+        {
+            Query+= " WHERE "+FIRSTNAME + " IN (SELECT DISTINCT "+PROFILENAME + " FROM "+RESULTSTABLE + ")";
+        }
         Cursor result = DeviceOpenHelper.getInstance(null).deviceRawQuery(Query,null);
         result.moveToFirst();
         for(int i = 0;i < result.getCount();i++)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="occupation">
+        <item>Select Occupation</item>
         <item>Doctor</item>
         <item>IT Engineer </item>
         <item>Student</item>
@@ -8,8 +9,6 @@
         <item>HouseWife</item>
         <item>Business Man</item>
         <item>None</item>
-        <item>Select Occupation</item>
-
     </string-array>
     <string-array name="interest">
         <item>Select Interest</item>

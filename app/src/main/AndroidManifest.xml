@@ -10,9 +10,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".SignUp"/>
         <activity android:name=".FirstPage"/>
-        <activity android:name=".QuizActivity"/>
         <activity android:name=".ResultActivity"/>
-        <activity android:name=".DisplayResult"/>
         <activity android:name=".AnotherProfile"/>
         <activity android:name=".QuizActivityNew"/>
         <activity android:name=".MainActivity">

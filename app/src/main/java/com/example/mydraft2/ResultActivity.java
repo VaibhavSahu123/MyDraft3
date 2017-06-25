@@ -1,10 +1,18 @@
 package com.example.mydraft2;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
@@ -31,11 +39,22 @@ public class ResultActivity extends AppCompatActivity {
     LineChart lineChart;
     String TAG = "ResultActivity :";
     final DbUtility dbUtility = new DbUtility();
+    String profileName;
+    Button btnChangeRelationProfile;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.line_graph_result);
+        profileName = getIntent().getStringExtra("SelectedProfile");
+        Log.d(TAG," ProfileName is " + profileName);
+
         lineChart = (LineChart) findViewById(R.id.linechart1);
+        TextView txtResultMsg = (TextView) findViewById(R.id.txtResultMsg);
+
+        btnChangeRelationProfile = (Button) findViewById(R.id.btnChangeRelationProfile);
+        btnChangeRelationProfile.setOnClickListener(new btnChangeRelationProfileListner());
+
+        txtResultMsg.setText("My Relationship with "+profileName);
         final List<String>  xValues = new ArrayList<String>();
         List<Integer> yValues = new ArrayList<Integer>();
 
@@ -92,8 +111,9 @@ public class ResultActivity extends AppCompatActivity {
         DateFormat graphFormat = new SimpleDateFormat("d-MMM"); //i.e. 4-Jul
         Date date = new Date();
 
-        String resultTableQuery = "SELECT * FROM RESULTS";
-        Cursor resultCursor= dbUtility.QueryDb(resultTableQuery,null);
+        String resultTableQuery = "SELECT * FROM RESULTS WHERE PROFILENAME = ?";
+        String[] Selection = {profileName};
+        Cursor resultCursor= dbUtility.QueryDb(resultTableQuery,Selection);
         resultCursor.moveToFirst();
         for(int i = 0 ; i < resultCursor.getCount();i++)
         {
@@ -109,4 +129,29 @@ public class ResultActivity extends AppCompatActivity {
         }
 
     }
+
+    class btnChangeRelationProfileListner implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
+            builder.setTitle("Pick Profile for which you want to see Result");
+            final List<String> profilesList = dbUtility.getProfileNames(true); // Must have entry in Result table i.e true
+
+                builder.setItems(profilesList.toArray(new String[profilesList.size()]), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Code to perform action here
+                        Intent intent = new Intent(getApplicationContext(), ResultActivity.class);
+                        Log.d("FirstPage", "Selected profile is " + profilesList.get(which));
+                        intent.putExtra("SelectedProfile", profilesList.get(which));
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
+            }
+
+        }
+
+
 }

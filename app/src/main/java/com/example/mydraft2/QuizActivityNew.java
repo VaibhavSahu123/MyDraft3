@@ -130,7 +130,9 @@ public class QuizActivityNew extends AppCompatActivity {
         if (id == R.id.end_quiz)
         {
             calculateTestResult();
+
             Intent intent = new Intent(getApplicationContext(),ResultActivity.class);
+            intent.putExtra("SelectedProfile",profileName);
             startActivity(intent);
             return true;
         }
