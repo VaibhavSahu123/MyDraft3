@@ -1,5 +1,6 @@
 package com.example.mydraft2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,9 +22,36 @@ public class AnotherProfile  extends AppCompatActivity
 {
     EditText edtRelationFirstName ,edtRelationLastName, edtRelationAge ;
     Button btnRelationNextPage, btnRelationFinish;
+
+    Button spnRelationOccupation,spnRelationInterest,spnRelationHobbeis;
+    Button spnRelationReligion,spnRelationCountry;
+    Button spnRelationKnowing,spnRelationCloseness,spnRelationcommFreq,spnRelationCommTopic;
+
+
     RadioButton rdtRelationMale, rdtRelationFemale,rdtRelationMarried ,rdtRelationUnMarried;
-    Spinner spnRelationOccupation,spnRelationHobbeis,spnRelationInterest,spnRelationReligion,spnRelationCountry;
-    Spinner spnRelationKnowing,spnRelationCloseness,spnRelationcommFreq,spnRelationCommTopic;
+    Context appCnt;
+
+    AnotherProfile()
+    {
+        appCnt=AnotherProfile.this;
+    }
+
+    String[] listOccupation,listInterest,listHobbies,listReligion,listCountry,listKnowing,listCloseness,listCommFreq ,listCommTopic;
+
+//Page one field
+    StringBuilder occupation = new StringBuilder();
+    StringBuilder interest = new StringBuilder();
+    StringBuilder hobbies = new StringBuilder();
+//Page two fields
+    StringBuilder religion = new StringBuilder();
+    StringBuilder country = new StringBuilder();
+    StringBuilder knowing = new StringBuilder();
+
+    StringBuilder closeness = new StringBuilder();
+    StringBuilder commFreq = new StringBuilder();
+    StringBuilder commTopic = new StringBuilder();
+
+
     final DbUtility dbUtility = new DbUtility();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,109 +67,151 @@ public class AnotherProfile  extends AppCompatActivity
         rdtRelationMarried = (RadioButton) findViewById(R.id.radioRelationBtnMarried);
         rdtRelationUnMarried = (RadioButton) findViewById(R.id.radioRelationBtnUnmarried);
 
-        spnRelationOccupation = (Spinner) findViewById(R.id.spinRelationOccupation);
-        spnRelationHobbeis = (Spinner) findViewById(R.id.spinRelationHobbies);
-        spnRelationInterest = (Spinner) findViewById(R.id.spinRelationInterest);
+        spnRelationOccupation = (Button) findViewById(R.id.spinRelationOccupation);
+        spnRelationHobbeis = (Button) findViewById(R.id.spinRelationHobbies);
+        spnRelationInterest = (Button) findViewById(R.id.spinRelationInterest);
 
 
         btnRelationNextPage = (Button) findViewById(R.id.btnRelationNext);
 
-        ArrayAdapter<CharSequence> adptOccupation = ArrayAdapter.createFromResource(this,R.array.occupation,android.R.layout.simple_spinner_item);
-        adptOccupation.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnRelationOccupation.setAdapter(adptOccupation);
+        listOccupation = getResources().getStringArray(R.array.occupation);
+        spnRelationOccupation.setOnClickListener(new MySpinnerListener(appCnt,listOccupation,occupation,spnRelationOccupation));
 
-        ArrayAdapter<CharSequence> adptInterest = ArrayAdapter.createFromResource(this,R.array.interest,android.R.layout.simple_spinner_item);
-        adptInterest.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnRelationInterest.setAdapter(adptInterest);
+        listInterest = getResources().getStringArray(R.array.interest);
+        spnRelationInterest.setOnClickListener(new MySpinnerListener(appCnt,listInterest,interest, spnRelationInterest));
 
-        ArrayAdapter<CharSequence> adptHobbbeis = ArrayAdapter.createFromResource(this,R.array.hobbies,android.R.layout.simple_spinner_item);
-        adptHobbbeis.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnRelationHobbeis.setAdapter(adptHobbbeis);
-
-
+        listHobbies = getResources().getStringArray(R.array.hobbies);
+        spnRelationHobbeis.setOnClickListener(new MySpinnerListener(appCnt,listHobbies,hobbies, spnRelationHobbeis));;
 
         btnRelationNextPage.setOnClickListener(new btnNextPageClickListener());
 
     }
 
+
+
     class btnNextPageClickListener implements View.OnClickListener
     {
         @Override
         public void onClick(View v) {
-            setContentView(R.layout.another_profile_page2);
-            btnRelationFinish = (Button) findViewById(R.id.btnRelationFinish);
+            if(!IsMandatoryFieldPopulated(true))//This check is for first page
+            {
+                Toast.makeText(getApplicationContext(),"Some Fields are missing, please fill those before moving to next page ",Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                setContentView(R.layout.another_profile_page2);
+                btnRelationFinish = (Button) findViewById(R.id.btnRelationFinish);
 
-            spnRelationCountry = (Spinner) findViewById(R.id.spinRelationCountry);
-            spnRelationReligion = (Spinner) findViewById(R.id.spinRelationReligion);
-            spnRelationCloseness = (Spinner) findViewById(R.id.spinRelationCloseness);
-            spnRelationcommFreq = (Spinner) findViewById(R.id.spinRelationCommunication);
-            spnRelationCommTopic = (Spinner) findViewById(R.id.spinRelationCommTopic);
-            spnRelationKnowing = (Spinner) findViewById(R.id.spinRelationKnowing);
+                spnRelationCountry = (Button) findViewById(R.id.spinRelationCountry);
+                spnRelationReligion = (Button) findViewById(R.id.spinRelationReligion);
+                spnRelationCloseness = (Button) findViewById(R.id.spinRelationCloseness);
+                spnRelationcommFreq = (Button) findViewById(R.id.spinRelationCommunication);
+                spnRelationCommTopic = (Button) findViewById(R.id.spinRelationCommTopic);
+                spnRelationKnowing = (Button) findViewById(R.id.spinRelationKnowing);
 
-            ArrayAdapter<CharSequence> adptCountry = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Country,android.R.layout.simple_spinner_item);
-            adptCountry.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationCountry.setAdapter(adptCountry);
+                listCountry = getResources().getStringArray(R.array.Country);
+                spnRelationCountry.setOnClickListener(new MySpinnerListener(appCnt, listCountry, country, spnRelationCountry));
 
-            ArrayAdapter<CharSequence> adptReligion = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Religion,android.R.layout.simple_spinner_item);
-            adptReligion.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationReligion.setAdapter(adptReligion);
+                listReligion = getResources().getStringArray(R.array.Religion);
+                spnRelationReligion.setOnClickListener(new MySpinnerListener(appCnt, listReligion, religion, spnRelationReligion));
 
-            ArrayAdapter<CharSequence> adptCloseness = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Closeness,android.R.layout.simple_spinner_item);
-            adptCloseness.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationCloseness.setAdapter(adptCloseness);
+                listCloseness = getResources().getStringArray(R.array.Closeness);
+                spnRelationCloseness.setOnClickListener(new MySpinnerListener(appCnt, listCloseness, closeness, spnRelationCloseness));
+                ;
 
-            ArrayAdapter<CharSequence> adptKnowing = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Knowing,android.R.layout.simple_spinner_item);
-            adptKnowing.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationKnowing.setAdapter(adptKnowing);
+                listKnowing = getResources().getStringArray(R.array.Knowing);
+                spnRelationKnowing.setOnClickListener(new MySpinnerListener(appCnt, listKnowing, knowing, spnRelationKnowing));
 
-            ArrayAdapter<CharSequence> adptCommunication = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Communication,android.R.layout.simple_spinner_item);
-            adptCommunication.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationcommFreq.setAdapter(adptCommunication);
+                listCommFreq = getResources().getStringArray(R.array.Communication);
+                spnRelationcommFreq.setOnClickListener(new MySpinnerListener(appCnt, listCommFreq, commFreq, spnRelationcommFreq));
+                ;
 
-            ArrayAdapter<CharSequence> adptCommTopic = ArrayAdapter.createFromResource(AnotherProfile.this,R.array.Communication_Topic,android.R.layout.simple_spinner_item);
-            adptCommTopic.setDropDownViewResource(android.R.layout.select_dialog_item);
-            spnRelationCommTopic.setAdapter(adptCommTopic);
-            Log.d("TAG","Finish Called");
-            btnRelationFinish.setOnClickListener(new btnFinishClickListener());
+                listCommTopic = getResources().getStringArray(R.array.Communication_Topic);
+                spnRelationCommTopic.setOnClickListener(new MySpinnerListener(appCnt, listCommTopic, commTopic, spnRelationCommTopic));
+                ;
+
+                Log.d("TAG", "Finish Called");
+                btnRelationFinish.setOnClickListener(new btnFinishClickListener());
+            }
         }
     }
 
-    class btnFinishClickListener implements View.OnClickListener
-    {
-        String firstName ,lastName , gender, marriedStatus, occupation, interest , hobbies ;
-        String religion , country , Knowing , Closeness , commFreq ,commTopic ;
-        Integer age;
-        @Override
-        public void onClick(View v) {
-            Log.d("Inside btnFinishClick", "onClick called");
+    private boolean IsMandatoryFieldPopulated(boolean pageOne ) {
+
+        if (pageOne)
+        {
+            String firstName ,lastName , gender, marriedStatus ;
+            String strAge;
             firstName = edtRelationFirstName.getText().toString();
             lastName = edtRelationLastName.getText().toString();
-            
+
             if(rdtRelationMale.isChecked())
                 gender ="Male";
             else
                 gender ="Female";
-            
+
             if (rdtRelationMarried.isChecked())
                 marriedStatus="Married";
             else
                 marriedStatus= "UnMarried";
-            age = Integer.valueOf(edtRelationAge.getText().toString());
-            
-            occupation = spnRelationOccupation.getSelectedItem().toString();
-            interest   = spnRelationInterest.getSelectedItem().toString();
-            hobbies    = spnRelationHobbeis.getSelectedItem().toString();
-            religion   = spnRelationReligion.getSelectedItem().toString();
-            country    = spnRelationCountry.getSelectedItem().toString();
-            Knowing    = spnRelationKnowing.getSelectedItem().toString();
-            Closeness  = spnRelationCloseness.getSelectedItem().toString();
-            commFreq   = spnRelationcommFreq.getSelectedItem().toString();
-            commTopic  = spnRelationCommTopic.getSelectedItem().toString();
-            dbUtility.insertProfileDetails(firstName,lastName,gender,marriedStatus,age,occupation,interest,hobbies,religion,country,Knowing,Closeness,commFreq,commTopic);
-            Toast.makeText(getApplicationContext(),"Profile "+firstName+" Created SucessFully",Toast.LENGTH_SHORT);
-            Log.d("Inside btnFinishClick", "onClick End");
-            Intent intent = new Intent(getApplicationContext(),FirstPage.class);
-            startActivity(intent);
+            strAge = edtRelationAge.getText().toString();
+
+            //Checking value from page one
+            if(firstName.isEmpty() || lastName.isEmpty() || gender.isEmpty() || marriedStatus.isEmpty() || strAge.isEmpty()
+                    || interest.length() ==0 || hobbies.length() ==0 || occupation.length() ==0)
+                return false;
+            else
+                return true;
+
+        }
+        else
+        {
+            if(knowing.length() ==0 || closeness.length() ==0 || commFreq.length() ==0 || commTopic.length() ==0 ||
+                    country.length() ==0 || religion.length()==0)
+                return false;
+            else
+                return true;
+        }
+
+    }
+
+    class btnFinishClickListener implements View.OnClickListener
+    {
+        String firstName ,lastName , gender, marriedStatus ;
+
+        Integer age;
+        @Override
+        public void onClick(View v) {
+
+            if(!IsMandatoryFieldPopulated(false))//firstPage = false ,This check is for second page
+            {
+                Toast.makeText(getApplicationContext(),"Some Fields are missing, please fill those before finish ",Toast.LENGTH_SHORT).show();
+            }
+            else {
+
+                Log.d("Inside btnFinishClick", "onClick called");
+                firstName = edtRelationFirstName.getText().toString();
+                lastName = edtRelationLastName.getText().toString();
+
+                if (rdtRelationMale.isChecked())
+                    gender = "Male";
+                else
+                    gender = "Female";
+
+                if (rdtRelationMarried.isChecked())
+                    marriedStatus = "Married";
+                else
+                    marriedStatus = "UnMarried";
+                age = Integer.valueOf(edtRelationAge.getText().toString());
+
+                dbUtility.insertProfileDetails(firstName, lastName, gender, marriedStatus, age, occupation.toString(),
+                        interest.toString(), hobbies.toString(), religion.toString(), country.toString(),
+                        knowing.toString(), closeness.toString(), commFreq.toString(), commTopic.toString());
+                Toast.makeText(getApplicationContext(), "Profile " + firstName + " Created SucessFully", Toast.LENGTH_SHORT);
+                Log.d("Inside btnFinishClick", "onClick End");
+                Intent intent = new Intent(getApplicationContext(), FirstPage.class);
+                startActivity(intent);
+            }
         }
     }
 }

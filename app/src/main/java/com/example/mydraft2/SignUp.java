@@ -1,5 +1,6 @@
 package com.example.mydraft2;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,10 +23,24 @@ import android.widget.Toast;
 public class SignUp extends AppCompatActivity  {
 
     Button btnSave ;
-    EditText edtFirstName ,edtLastName , edtSelectedUserName, edtSelectedPassword ;
+    EditText edtFirstName ,edtLastName ,edtAge, edtSelectedUserName, edtSelectedPassword ;
     RadioButton rdtMale, rdtFemale ;
-    Spinner spnHobbeis,spnInterest,spnReligion,spnCountry,spnOccupation;
+    Button spnHobbeis,spnInterest,spnReligion,spnCountry,spnOccupation;
+    Context appCnt;
+
+    String[] listOccupation,listInterest,listHobbies,listReligion,listCountry,listKnowing,listCloseness,listCommFreq ,listCommTopic;
+
+    StringBuilder occupation = new StringBuilder();
+    StringBuilder interest = new StringBuilder();
+    StringBuilder hobbies = new StringBuilder();
+
+    StringBuilder religion = new StringBuilder();
+    StringBuilder country = new StringBuilder();
+
+    String firstName ,lastName,gender,strAge,userName,password;
+
     final DbUtility dbUtility = new DbUtility();
+    SignUp(){appCnt = SignUp.this;}
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,68 +51,96 @@ public class SignUp extends AppCompatActivity  {
         edtLastName = (EditText) findViewById(R.id.edtLastName);
         edtSelectedUserName = (EditText) findViewById(R.id.edtSelectedUser);
         edtSelectedPassword = (EditText) findViewById(R.id.edtSelectedPwd);
+        edtAge = (EditText) findViewById(R.id.edtAge);
+
         rdtMale = (RadioButton) findViewById(R.id.radioBtnMale);
         rdtFemale = (RadioButton) findViewById(R.id.radioBtnfemale);
 
-        spnOccupation = (Spinner) findViewById(R.id.spinOccupation);
-        spnHobbeis = (Spinner) findViewById(R.id.spinHobbies);
-        spnInterest = (Spinner) findViewById(R.id.spinInterest);
-        spnCountry = (Spinner) findViewById(R.id.spinCountry);
-        spnReligion = (Spinner) findViewById(R.id.spinReligion);
+        spnOccupation = (Button) findViewById(R.id.spinOccupation);
+        spnHobbeis = (Button) findViewById(R.id.spinHobbies);
+        spnInterest = (Button) findViewById(R.id.spinInterest);
+        spnCountry = (Button) findViewById(R.id.spinCountry);
+        spnReligion = (Button) findViewById(R.id.spinReligion);
 
-        ArrayAdapter<CharSequence> adptOccupation = ArrayAdapter.createFromResource(this,R.array.occupation,android.R.layout.simple_spinner_item);
-        adptOccupation.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnOccupation.setAdapter(adptOccupation);
+        listOccupation = getResources().getStringArray(R.array.occupation);
+        spnOccupation.setOnClickListener(new MySpinnerListener(appCnt, listOccupation, occupation, spnOccupation));
 
 
-        ArrayAdapter<CharSequence> adptInterest = ArrayAdapter.createFromResource(this,R.array.interest,android.R.layout.simple_spinner_item);
-        adptInterest.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnInterest.setAdapter(adptInterest);
+        listInterest = getResources().getStringArray(R.array.interest);
+        spnInterest.setOnClickListener(new MySpinnerListener(appCnt, listInterest, interest, spnInterest));
 
-        ArrayAdapter<CharSequence> adptHobbbeis = ArrayAdapter.createFromResource(this,R.array.hobbies,android.R.layout.simple_spinner_item);
-        adptHobbbeis.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnHobbeis.setAdapter(adptHobbbeis);
 
-        ArrayAdapter<CharSequence> adptCountry = ArrayAdapter.createFromResource(this,R.array.Country,android.R.layout.simple_spinner_item);
-        adptCountry.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnCountry.setAdapter(adptCountry);
+        listHobbies = getResources().getStringArray(R.array.hobbies);
+        spnHobbeis.setOnClickListener(new MySpinnerListener(appCnt, listHobbies, hobbies, spnHobbeis));
 
-        ArrayAdapter<CharSequence> adptReligion = ArrayAdapter.createFromResource(this,R.array.Religion,android.R.layout.simple_spinner_item);
-        adptReligion.setDropDownViewResource(android.R.layout.select_dialog_item);
-        spnReligion.setAdapter(adptReligion);
+
+        listCountry = getResources().getStringArray(R.array.Country);
+        spnCountry.setOnClickListener(new MySpinnerListener(appCnt, listCountry, country, spnCountry));
+
+
+        listReligion = getResources().getStringArray(R.array.Religion);
+        spnReligion.setOnClickListener(new MySpinnerListener(appCnt, listReligion, religion, spnReligion));
 
         btnSave = (Button) findViewById(R.id.btnCreateAcccount);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String firstName;
-                String lastName;
-                String occupation;
-                String gender;
-                String userName;
-                String password;
-                firstName = edtFirstName.getText().toString();
-                lastName = edtLastName.getText().toString();
-                occupation = spnOccupation.getSelectedItem().toString();
 
-                if(rdtMale.isChecked())
-                    gender ="Male";
-                else
-                    gender ="Female";
+                if(!IsMandatoryFieldPopulated())//This check is for first page
+                {
+                    Toast.makeText(getApplicationContext(),"Some Fields are missing, please provide those details for account creation",Toast.LENGTH_SHORT).show();
+                }
+                else {
 
-                userName = edtSelectedUserName.getText().toString();
-                password = edtSelectedPassword.getText().toString();
+                    firstName = edtFirstName.getText().toString();
+                    lastName = edtLastName.getText().toString();
+                    strAge= edtAge.getText().toString();
+                    //occupation = spnOccupation.getSelectedItem().toString();
 
-                dbUtility.insertUserDetails(firstName,lastName,occupation,gender,userName,password);
+                    if (rdtMale.isChecked())
+                        gender = "Male";
+                    else
+                        gender = "Female";
 
-                Toast.makeText(SignUp.this, "User Account Created Successfully ", Toast.LENGTH_SHORT).show();
+                    userName = edtSelectedUserName.getText().toString();
+                    password = edtSelectedPassword.getText().toString();
 
-                Intent intent = new Intent(getApplicationContext() ,MainActivity.class);
-                startActivity(intent);
+
+                    dbUtility.insertUserDetails(firstName, lastName, occupation.toString(), gender, userName, password);
+
+                    Toast.makeText(SignUp.this, "User Account Created Successfully ", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
 
             }
         });
+
+    }
+
+    private boolean IsMandatoryFieldPopulated()
+    {
+        firstName = edtFirstName.getText().toString();
+        lastName = edtLastName.getText().toString();
+        strAge= edtAge.getText().toString();
+        //occupation = spnOccupation.getSelectedItem().toString();
+
+        if (rdtMale.isChecked())
+            gender = "Male";
+        else
+            gender = "Female";
+
+        userName = edtSelectedUserName.getText().toString();
+        password = edtSelectedPassword.getText().toString();
+
+        if(firstName.isEmpty() || lastName.isEmpty() || gender.isEmpty()||userName.isEmpty() ||password.isEmpty()
+                ||strAge.isEmpty() || spnOccupation.length()==0 || spnReligion.length()==0
+                ||spnInterest.length()==0 || spnHobbeis.length()==0  || spnCountry.length()==0)
+            return false;
+        else
+            return true;
 
     }
 }

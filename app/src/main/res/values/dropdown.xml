@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="occupation">
-        <item>Select Occupation</item>
         <item>Doctor</item>
         <item>IT Engineer </item>
         <item>Student</item>
@@ -11,7 +10,6 @@
         <item>None</item>
     </string-array>
     <string-array name="interest">
-        <item>Select Interest</item>
         <item>Social Work</item>
         <item>Stamp Collection</item>
         <item>Surfing</item>
@@ -22,7 +20,6 @@
 
     </string-array>
     <string-array name="hobbies">
-        <item>Select Hobbies</item>
         <item>Music</item>
         <item>Traveling</item>
         <item>Fishing</item>
@@ -32,7 +29,6 @@
     </string-array>
 
     <string-array name="Religion">
-        <item>Select Religion</item>
         <item>Hinduism</item>
         <item>Jainism</item>
         <item>Islam</item>
@@ -42,7 +38,6 @@
     </string-array>
 
     <string-array name="Country">
-        <item>Select Country</item>
         <item>Russia</item>
         <item>Canada </item>
         <item>USA</item>
@@ -54,7 +49,9 @@
         <item>Other</item>
     </string-array>
 <string-array name="Knowing">
-    <item>Select How do you Know him?</item>
+    <item>School/Colledge</item>
+    <item>Family member</item>
+    <item>Relative</item>
     <item>School/Colledge</item>
     <item>Neighbour</item>
     <item>Work/Business</item>
@@ -64,14 +61,12 @@
     <item>Institute</item>
 </string-array>
 <string-array name="Closeness">
-    <item>Select How Close you are?</item>
     <item>Very Close</item>
     <item>Close</item>
     <item>Intermittently Close</item>
     <item>Not Close</item>
 </string-array>
 <string-array name="Communication">
-    <item>Select Often you communicate With Him?</item>
     <item>Yearly</item>
     <item>Monthly</item>
     <item>Weakly</item>
@@ -80,8 +75,8 @@
 </string-array>
 
 <string-array name="Communication_Topic">
-    <item>Select Communication Topic with him?</item>
     <item>Music</item>
+    <item>Sports</item>
     <item>Traveling</item>
     <item>Fishing</item>
     <item>Hunting</item>
