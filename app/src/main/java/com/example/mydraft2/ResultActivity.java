@@ -98,7 +98,7 @@ public class ResultActivity extends AppCompatActivity {
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
-
+      //  lineChart.setViewPortOffsets(-40,0,0,0);
         dataSet.setDrawFilled(true);
         lineChart.invalidate(); // refresh
 

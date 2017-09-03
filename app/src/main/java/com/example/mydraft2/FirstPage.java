@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class FirstPage extends AppCompatActivity
 {
     TextView txtWelcome;
     Context context;
-    Button btnTakeQuiz, btnViewResult, btnProfileForQuiz;
+    static String firstName;
+    Button btnTakeQuiz, btnViewResult, btnProfileForQuiz,btnModifyProfile;
     final DbUtility dbUtility = new DbUtility();
 
     FirstPage()
@@ -38,16 +40,49 @@ public class FirstPage extends AppCompatActivity
         btnTakeQuiz = (Button) findViewById(R.id.btnQuiz);
         btnViewResult = (Button) findViewById(R.id.btnViewResult);
         btnProfileForQuiz = (Button)findViewById(R.id.btnAnotherProfile);
-
+        btnModifyProfile = (Button) findViewById(R.id.btnModifyProfile);
         Intent intent = getIntent();
-        String firstName = intent.getStringExtra("FirstName");
-        Log.d("ONCreate", "onCreate: "+ firstName);
-
+        if(firstName==null) //Populating for first time
+        {
+            firstName = intent.getStringExtra("FirstName");
+            Log.d("ONCreate", "onCreate: " + firstName);
+        }
         txtWelcome.setText("Welcome "+ firstName+", What would you like to do ?");
 
         btnTakeQuiz.setOnClickListener(new btnQuizClickListner());
         btnViewResult.setOnClickListener(new btnResultClickListner());
         btnProfileForQuiz.setOnClickListener(new btnAnotherProfilebClickListner());
+        btnModifyProfile.setOnClickListener(new btnModifyProfileClickListner());
+    }
+
+    class btnModifyProfileClickListner implements View.OnClickListener
+    {
+        @Override
+        public void onClick(View v) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Pick Profile ");
+            final List<String> profilesList = dbUtility.getProfileNames(false);//Don't need to have entry in result i.e false
+            // If profile has no name ask user to create profile first
+            if (profilesList.isEmpty())
+            {
+                Toast.makeText(getApplicationContext(),"Before Modify , need to create a profile first", Toast.LENGTH_SHORT);
+            }
+            else
+            {
+                builder.setItems(profilesList.toArray(new String[profilesList.size()]), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Code to perform action here
+                        Intent intent = new Intent(getApplicationContext(),ModifyProfile.class);
+                        Log.d("FirstPage", "Selected profile is "+ profilesList.get(which));
+                        intent.putExtra("SelectedProfile",profilesList.get(which));
+                        startActivity(intent);
+                    }
+                });
+                builder.show();
+            }
+
+        }
     }
 
     class btnAnotherProfilebClickListner implements View.OnClickListener {

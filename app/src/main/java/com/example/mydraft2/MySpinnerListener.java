@@ -39,7 +39,7 @@ class MySpinnerListener implements View.OnClickListener
     {
         if(!mUserItems.isEmpty())
         {
-            btn.setText("done , Reselect ?");
+            btn.setText("done");
             // v.setBackgroundColor(rgb(144,238,144));//Light green
         }
         else

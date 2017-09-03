@@ -90,6 +90,38 @@ public class DbUtility
         DeviceOpenHelper.getInstance(null).deviceInsert(USERTABLE,null,values);
     }
 
+    public void getProfileDetails(StringWrapper firstName , StringWrapper lastName , StringWrapper gender ,
+                                 StringWrapper marriedStatus  , StringWrapper age  ,StringWrapper occupation,
+                                  StringWrapper interest, StringWrapper hobbies  , StringWrapper religion ,
+                                  StringWrapper country , StringWrapper howKnowHim , StringWrapper howClose ,
+                                  StringWrapper commFrequency , StringWrapper commTopic)
+    {
+        String SelectQuery = "SELECT " + FIRSTNAME + "," + LASTNAME + "," + GENDER + "," + MARRIEDSTATUS +
+                "," + AGE + "," + OCCUPATION + "," + INTEREST + "," + HOBBIES + "," + RELIGION +
+                "," + COUNTRY + "," + HOWKNOWHIM + "," + HOWCLOSE + "," + COMMFREQUNCY + "," + COMMTOPIC + "  FROM " + PROFILETABLE ;
+        String WhereClause = " WHERE "+FIRSTNAME + "= ? ";
+        String Query = SelectQuery + WhereClause;
+
+        String [] Selection ={ firstName.getString() };
+        Cursor result = DeviceOpenHelper.getInstance(null).deviceRawQuery(Query,Selection);
+        result.moveToFirst();
+
+        lastName.setString(result.getString(result.getColumnIndex(LASTNAME)));
+        gender.setString(result.getString(result.getColumnIndex(GENDER)));
+        marriedStatus.setString(result.getString(result.getColumnIndex(MARRIEDSTATUS)));
+        age.setString(result.getString(result.getColumnIndex(AGE)));
+        occupation.setString(result.getString(result.getColumnIndex(OCCUPATION)));
+        interest.setString(result.getString(result.getColumnIndex(INTEREST)));
+        hobbies.setString(result.getString(result.getColumnIndex(HOBBIES)));
+        religion.setString(result.getString(result.getColumnIndex(RELIGION)));
+        country.setString(result.getString(result.getColumnIndex(COUNTRY)));
+        howKnowHim.setString(result.getString(result.getColumnIndex(HOWKNOWHIM)));
+        howClose.setString(result.getString(result.getColumnIndex(HOWCLOSE)));
+        commFrequency.setString(result.getString(result.getColumnIndex(COMMFREQUNCY)));
+        commTopic.setString(result.getString(result.getColumnIndex(COMMTOPIC)));
+
+    }
+
     public void insertProfileDetails(String firstName , String lastName , String gender ,
                                      String marriedStatus  , Integer age  ,String occupation, String interest, String hobbies  ,
                                      String religion , String country , String howKnowHim , String howClose , String commFrequency ,

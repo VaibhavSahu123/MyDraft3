@@ -36,4 +36,13 @@
         android:layout_marginRight="@dimen/activity_side_margin"
         android:id="@+id/btnAnotherProfile"
         android:layout_marginTop="15dp"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Modify Existing Profile"
+        android:layout_marginLeft="@dimen/activity_side_margin"
+        android:layout_marginRight="@dimen/activity_side_margin"
+        android:id="@+id/btnModifyProfile"
+        android:layout_marginTop="15dp"/>
+
 </LinearLayout>

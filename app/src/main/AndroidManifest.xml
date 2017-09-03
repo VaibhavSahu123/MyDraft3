@@ -13,6 +13,7 @@
         <activity android:name=".ResultActivity"/>
         <activity android:name=".AnotherProfile"/>
         <activity android:name=".QuizActivityNew"/>
+        <activity android:name=".ModifyProfile"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

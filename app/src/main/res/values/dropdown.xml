@@ -16,6 +16,26 @@
         <item>Listening Music</item>
         <item>Gossiping</item>
         <item>Shopping</item>
+        <item>Bollywood</item>
+        <item>Religion</item>
+        <item>Sports-cricket</item>
+        <item>Sports-soccer</item>
+        <item>Sports-tennis</item>
+        <item>Sports-badminton</item>
+        <item>Sports-table tennis</item>
+        <item>Sports-other</item>
+        <item>Games-bridge</item>
+        <item>Games-in house</item>
+        <item>TV reality shows</item>
+        <item>TV mythology shows</item>
+        <item>TV fiction shows</item>
+        <item>Jokes</item>
+        <item>Politics</item>
+        <item>Economics</item>
+        <item>World events</item>
+        <item>Religious events </item>
+        <item>Books</item>
+        <item>Romance</item>
         <item>None</item>
 
     </string-array>
@@ -25,6 +45,19 @@
         <item>Fishing</item>
         <item>Hunting</item>
         <item>Reading</item>
+        <item>Sports</item>
+        <item>Dancing</item>
+        <item>Singing</item>
+        <item>Relaxing</item>
+        <item>Watching tv</item>
+        <item>Movies</item>
+        <item>Playing board games</item>
+        <item>Playing video games</item>
+        <item>Swimming</item>
+        <item>Outdoor activities</item>
+        <item>Drives</item>
+        <item>Casino/Gambling</item>
+        <item>Cooking</item>
         <item>None</item>
     </string-array>
 
