@@ -94,7 +94,7 @@ public class QuizActivityNew extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Swap right to left to go next question", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });

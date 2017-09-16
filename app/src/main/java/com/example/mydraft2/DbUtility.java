@@ -90,11 +90,11 @@ public class DbUtility
         DeviceOpenHelper.getInstance(null).deviceInsert(USERTABLE,null,values);
     }
 
-    public void getProfileDetails(StringWrapper firstName , StringWrapper lastName , StringWrapper gender ,
-                                 StringWrapper marriedStatus  , StringWrapper age  ,StringWrapper occupation,
-                                  StringWrapper interest, StringWrapper hobbies  , StringWrapper religion ,
-                                  StringWrapper country , StringWrapper howKnowHim , StringWrapper howClose ,
-                                  StringWrapper commFrequency , StringWrapper commTopic)
+    public void getProfileDetails(StringBuilder firstName , StringBuilder lastName , StringBuilder gender ,
+                                 StringBuilder marriedStatus  , StringBuilder age  ,StringBuilder occupation,
+                                  StringBuilder interest, StringBuilder hobbies  , StringBuilder religion ,
+                                  StringBuilder country , StringBuilder howKnowHim , StringBuilder howClose ,
+                                  StringBuilder commFrequency , StringBuilder commTopic)
     {
         String SelectQuery = "SELECT " + FIRSTNAME + "," + LASTNAME + "," + GENDER + "," + MARRIEDSTATUS +
                 "," + AGE + "," + OCCUPATION + "," + INTEREST + "," + HOBBIES + "," + RELIGION +
@@ -102,23 +102,23 @@ public class DbUtility
         String WhereClause = " WHERE "+FIRSTNAME + "= ? ";
         String Query = SelectQuery + WhereClause;
 
-        String [] Selection ={ firstName.getString() };
+        String [] Selection ={ firstName.toString() };
         Cursor result = DeviceOpenHelper.getInstance(null).deviceRawQuery(Query,Selection);
         result.moveToFirst();
 
-        lastName.setString(result.getString(result.getColumnIndex(LASTNAME)));
-        gender.setString(result.getString(result.getColumnIndex(GENDER)));
-        marriedStatus.setString(result.getString(result.getColumnIndex(MARRIEDSTATUS)));
-        age.setString(result.getString(result.getColumnIndex(AGE)));
-        occupation.setString(result.getString(result.getColumnIndex(OCCUPATION)));
-        interest.setString(result.getString(result.getColumnIndex(INTEREST)));
-        hobbies.setString(result.getString(result.getColumnIndex(HOBBIES)));
-        religion.setString(result.getString(result.getColumnIndex(RELIGION)));
-        country.setString(result.getString(result.getColumnIndex(COUNTRY)));
-        howKnowHim.setString(result.getString(result.getColumnIndex(HOWKNOWHIM)));
-        howClose.setString(result.getString(result.getColumnIndex(HOWCLOSE)));
-        commFrequency.setString(result.getString(result.getColumnIndex(COMMFREQUNCY)));
-        commTopic.setString(result.getString(result.getColumnIndex(COMMTOPIC)));
+        lastName.append(result.getString(result.getColumnIndex(LASTNAME)));
+        gender.append(result.getString(result.getColumnIndex(GENDER)));
+        marriedStatus.append(result.getString(result.getColumnIndex(MARRIEDSTATUS)));
+        age.append(result.getString(result.getColumnIndex(AGE)));
+        occupation.append(result.getString(result.getColumnIndex(OCCUPATION)));
+        interest.append(result.getString(result.getColumnIndex(INTEREST)));
+        hobbies.append(result.getString(result.getColumnIndex(HOBBIES)));
+        religion.append(result.getString(result.getColumnIndex(RELIGION)));
+        country.append(result.getString(result.getColumnIndex(COUNTRY)));
+        howKnowHim.append(result.getString(result.getColumnIndex(HOWKNOWHIM)));
+        howClose.append(result.getString(result.getColumnIndex(HOWCLOSE)));
+        commFrequency.append(result.getString(result.getColumnIndex(COMMFREQUNCY)));
+        commTopic.append(result.getString(result.getColumnIndex(COMMTOPIC)));
 
     }
 
@@ -191,6 +191,7 @@ public class DbUtility
             return false;
 
     }
+    
 
     public Cursor QueryDb(String Query, String [] Selection)
     {
@@ -198,4 +199,24 @@ public class DbUtility
         return queryResult;
     }
 
+    public void updateProfileDetails(String firstName , String lastName , String gender ,
+                                     String marriedStatus  , Integer age  ,String occupation, String interest, String hobbies  ,
+                                     String religion , String country , String howKnowHim , String howClose , String commFrequency ,
+                                     String commTopic ) 
+    {
+        //Delete and then insert profile for update
+        deleteProfile(firstName);
+        insertProfileDetails(firstName, lastName, gender, marriedStatus, age, occupation,
+                interest, hobbies, religion, country,
+                howKnowHim, howClose, commFrequency, commTopic);
+        
+    }
+
+    private void deleteProfile(String firstName) 
+    {
+        String whereColumn = FIRSTNAME + "=?";
+        String [] values ={ firstName };
+        boolean result = DeviceOpenHelper.getInstance(null).delete(PROFILETABLE ,whereColumn,values );
+
+    }
 }

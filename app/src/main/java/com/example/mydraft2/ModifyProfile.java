@@ -12,6 +12,10 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by dikki on 03/09/2017.
  */
@@ -29,12 +33,6 @@ public class ModifyProfile extends AppCompatActivity
     RadioButton rdtRelationMale, rdtRelationFemale,rdtRelationMarried ,rdtRelationUnMarried;
     Context appCnt;
 
-    StringWrapper strWrpfirstName = new StringWrapper(),strWrphowKnowHim = new StringWrapper(), strWrphowClose = new StringWrapper();
-    StringWrapper strWrplastName = new StringWrapper(), strWrpgender = new StringWrapper(), strWrpmarriedStatus = new StringWrapper();
-    StringWrapper strWrpage = new StringWrapper()  ,strWrpoccupation = new StringWrapper(), strWrpinterest= new StringWrapper();
-    StringWrapper strWrphobbies = new StringWrapper(),strWrpreligion = new StringWrapper() ,strWrpcountry = new StringWrapper();
-    StringWrapper strWrpcommFrequency = new StringWrapper(), strWrpcommTopic = new StringWrapper();
-
     ModifyProfile()
     {
         appCnt=ModifyProfile.this;
@@ -43,7 +41,12 @@ public class ModifyProfile extends AppCompatActivity
     String[] listOccupation,listInterest,listHobbies,listReligion,listCountry,listKnowing,listCloseness,listCommFreq ,listCommTopic;
 
     //Page one field
-    StringWrapper firstName ;
+    StringBuilder firstName = new StringBuilder();
+    StringBuilder lastName = new StringBuilder();
+    StringBuilder gender = new StringBuilder();
+    StringBuilder marriedStatus = new StringBuilder() ;
+    StringBuilder strAge = new StringBuilder() ;
+    
     StringBuilder occupation = new StringBuilder();
     StringBuilder interest = new StringBuilder();
     StringBuilder hobbies = new StringBuilder();
@@ -62,25 +65,44 @@ public class ModifyProfile extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-         strWrpfirstName.setString(getIntent().getStringExtra("SelectedProfile"));
+         firstName.append(getIntent().getStringExtra("SelectedProfile"));
         Log.d(TAG," ProfileName is " + firstName);
-        dbUtility.getProfileDetails(strWrpfirstName,strWrplastName,strWrpgender,strWrpmarriedStatus,
-                strWrpage,strWrpoccupation,strWrpinterest,strWrphobbies,strWrpreligion,strWrpcountry,
-                strWrphowKnowHim,strWrphowClose,strWrpcommFrequency,strWrpcommTopic);
+        dbUtility.getProfileDetails(firstName,lastName,gender,marriedStatus,
+                strAge,occupation,interest,hobbies,religion,country,
+                knowing,closeness,commFreq,commTopic);
         setContentView(R.layout.another_profile);
+
         edtRelationFirstName = (EditText) findViewById(R.id.edtRelationFirsName);
         edtRelationLastName = (EditText) findViewById(R.id.edtRelationLastName);
         edtRelationAge = (EditText) findViewById(R.id.edtRelationAge);
 
-        edtRelationFirstName.setText(strWrpfirstName.getString());
-        edtRelationLastName.setText(strWrplastName.getString());
-        edtRelationAge.setText(strWrpage.getString());
+        edtRelationFirstName.setText(firstName.toString());
+        edtRelationLastName.setText(lastName.toString());
+        edtRelationAge.setText(strAge.toString());
 
-        rdtRelationMale = (RadioButton) findViewById(R.id.radioRelationBtnMale);
         rdtRelationFemale = (RadioButton) findViewById(R.id.radioRelationBtnfemale);
-
+        rdtRelationMale = (RadioButton) findViewById(R.id.radioRelationBtnMale);
         rdtRelationMarried = (RadioButton) findViewById(R.id.radioRelationBtnMarried);
         rdtRelationUnMarried = (RadioButton) findViewById(R.id.radioRelationBtnUnmarried);
+
+        if(gender.toString().equalsIgnoreCase("male"))
+        {
+            rdtRelationMale.setChecked(true);
+        }
+        else
+        {
+            rdtRelationFemale.setChecked(true);
+        }
+
+        if(marriedStatus.toString().equalsIgnoreCase("female"))
+        {
+            rdtRelationMarried.setChecked(true);
+        }
+        else
+        {
+            rdtRelationUnMarried.setChecked(true);
+        }
+
 
         spnRelationOccupation = (Button) findViewById(R.id.spinRelationOccupation);
         spnRelationHobbeis = (Button) findViewById(R.id.spinRelationHobbies);
@@ -90,18 +112,51 @@ public class ModifyProfile extends AppCompatActivity
         btnRelationNextPage = (Button) findViewById(R.id.btnRelationNext);
 
         listOccupation = getResources().getStringArray(R.array.occupation);
-        spnRelationOccupation.setOnClickListener(new MySpinnerListener(appCnt,listOccupation,occupation,spnRelationOccupation));
+        boolean [] checkedItemForOccupation = compareIfItemChecked(listOccupation,occupation);
+        //occupation.append(strWrpoccupation.getString());
+        spnRelationOccupation.setOnClickListener(new MySpinnerListener(appCnt,listOccupation,occupation,spnRelationOccupation,checkedItemForOccupation ));
 
         listInterest = getResources().getStringArray(R.array.interest);
-        spnRelationInterest.setOnClickListener(new MySpinnerListener(appCnt,listInterest,interest, spnRelationInterest));
+        boolean [] checkedItemForInterest = compareIfItemChecked(listInterest,interest);
+        //interest.append(strWrpinterest.getString());
+        spnRelationInterest.setOnClickListener(new MySpinnerListener(appCnt,listInterest,interest, spnRelationInterest,checkedItemForInterest));
 
         listHobbies = getResources().getStringArray(R.array.hobbies);
-        spnRelationHobbeis.setOnClickListener(new MySpinnerListener(appCnt,listHobbies,hobbies, spnRelationHobbeis));;
+        boolean [] checkedItemForHobbies = compareIfItemChecked(listHobbies,hobbies);
+        //hobbies.append(strWrphobbies.getString());
+        spnRelationHobbeis.setOnClickListener(new MySpinnerListener(appCnt,listHobbies,hobbies, spnRelationHobbeis,checkedItemForHobbies));;
 
         btnRelationNextPage.setOnClickListener(new btnNextPageClickListener());
 
     }
-class btnNextPageClickListener implements View.OnClickListener
+
+    private boolean[] compareIfItemChecked(String[] listOccupation, StringBuilder strSelection)
+    {
+        boolean [] result = new boolean[listOccupation.length];//Default all element would be false
+        List<String> ItemSelected = new ArrayList<String>(Arrays.asList(strSelection.toString().split("\\s*,\\s*")));
+        for(String test : ItemSelected)
+        {
+            Log.d(TAG, "compareIfItemChecked: "+ test);
+
+        }
+        Log.d(TAG, "compareIfItemChecked: "+ strSelection.toString());
+
+        //Compare to get boolean array of checked item
+        for(int i =0 ; i < listOccupation.length ; i++) {
+            for (int j = 0; j < ItemSelected.size(); j++) {
+                if (listOccupation[i].equalsIgnoreCase(ItemSelected.get(j))) {
+                    result[i] = true;
+                    break;
+                }
+            }
+        }
+
+        for(int i =0 ; i < result.length;i++ )
+            Log.d(TAG, "compareIfItemChecked: "+ result[i]);
+        return result;
+    }
+
+    class btnNextPageClickListener implements View.OnClickListener
 {
     @Override
     public void onClick(View v) {
@@ -122,24 +177,30 @@ class btnNextPageClickListener implements View.OnClickListener
             spnRelationKnowing = (Button) findViewById(R.id.spinRelationKnowing);
 
             listCountry = getResources().getStringArray(R.array.Country);
-            spnRelationCountry.setOnClickListener(new MySpinnerListener(appCnt, listCountry, country, spnRelationCountry));
+            boolean [] checkedItemForCountry = compareIfItemChecked(listCountry,country);
+            spnRelationCountry.setOnClickListener(new MySpinnerListener(appCnt, listCountry, country, spnRelationCountry,checkedItemForCountry));
 
             listReligion = getResources().getStringArray(R.array.Religion);
-            spnRelationReligion.setOnClickListener(new MySpinnerListener(appCnt, listReligion, religion, spnRelationReligion));
+            boolean [] checkedItemForReligion = compareIfItemChecked(listReligion,religion);
+            spnRelationReligion.setOnClickListener(new MySpinnerListener(appCnt, listReligion, religion, spnRelationReligion,checkedItemForReligion));
 
             listCloseness = getResources().getStringArray(R.array.Closeness);
-            spnRelationCloseness.setOnClickListener(new MySpinnerListener(appCnt, listCloseness, closeness, spnRelationCloseness));
+            boolean [] checkedItemForCloseness = compareIfItemChecked(listCloseness,closeness);
+            spnRelationCloseness.setOnClickListener(new MySpinnerListener(appCnt, listCloseness, closeness, spnRelationCloseness,checkedItemForCloseness));
             ;
 
             listKnowing = getResources().getStringArray(R.array.Knowing);
-            spnRelationKnowing.setOnClickListener(new MySpinnerListener(appCnt, listKnowing, knowing, spnRelationKnowing));
+            boolean [] checkedItemForKnowing = compareIfItemChecked(listKnowing,knowing);
+            spnRelationKnowing.setOnClickListener(new MySpinnerListener(appCnt, listKnowing, knowing, spnRelationKnowing,checkedItemForKnowing));
 
             listCommFreq = getResources().getStringArray(R.array.Communication);
-            spnRelationcommFreq.setOnClickListener(new MySpinnerListener(appCnt, listCommFreq, commFreq, spnRelationcommFreq));
+            boolean [] checkedItemForCommFreq = compareIfItemChecked(listCommFreq,commFreq );
+            spnRelationcommFreq.setOnClickListener(new MySpinnerListener(appCnt, listCommFreq, commFreq, spnRelationcommFreq,checkedItemForCommFreq));
             ;
 
             listCommTopic = getResources().getStringArray(R.array.Communication_Topic);
-            spnRelationCommTopic.setOnClickListener(new MySpinnerListener(appCnt, listCommTopic, commTopic, spnRelationCommTopic));
+            boolean [] checkedItemForCommTopic = compareIfItemChecked(listCommTopic,commTopic );
+            spnRelationCommTopic.setOnClickListener(new MySpinnerListener(appCnt, listCommTopic, commTopic, spnRelationCommTopic,checkedItemForCommTopic));
             ;
 
             Log.d("TAG", "Finish Called");
@@ -169,8 +230,10 @@ class btnNextPageClickListener implements View.OnClickListener
             strAge = edtRelationAge.getText().toString();
 
             //Checking value from page one
-            if(firstName.isEmpty() || lastName.isEmpty() || gender.isEmpty() || marriedStatus.isEmpty() || strAge.isEmpty()
-                    || interest.length() ==0 || hobbies.length() ==0 || occupation.length() ==0)
+            if(firstName.isEmpty() || lastName.isEmpty() ||
+                    gender.isEmpty() || marriedStatus.isEmpty() ||
+                    strAge.isEmpty() || interest.toString().isEmpty() ||
+                    hobbies.toString().isEmpty()|| occupation.toString().isEmpty())
                 return false;
             else
                 return true;
@@ -178,8 +241,8 @@ class btnNextPageClickListener implements View.OnClickListener
         }
         else
         {
-            if(knowing.length() ==0 || closeness.length() ==0 || commFreq.length() ==0 || commTopic.length() ==0 ||
-                    country.length() ==0 || religion.length()==0)
+            if(knowing.toString().isEmpty() || closeness.toString().isEmpty() || commFreq.toString().isEmpty()
+                    || commTopic.toString().isEmpty() || country.toString().isEmpty() || religion.toString().isEmpty())
                 return false;
             else
                 return true;
@@ -216,10 +279,12 @@ class btnFinishClickListener implements View.OnClickListener
                 marriedStatus = "UnMarried";
             age = Integer.valueOf(edtRelationAge.getText().toString());
 
-            dbUtility.insertProfileDetails(firstName, lastName, gender, marriedStatus, age, occupation.toString(),
+
+            dbUtility.updateProfileDetails(firstName, lastName, gender, marriedStatus, age, occupation.toString(),
                     interest.toString(), hobbies.toString(), religion.toString(), country.toString(),
                     knowing.toString(), closeness.toString(), commFreq.toString(), commTopic.toString());
-            Toast.makeText(getApplicationContext(), "Profile " + firstName + " Created SucessFully", Toast.LENGTH_SHORT);
+
+            Toast.makeText(getApplicationContext(), "Profile " + firstName + " Updated SuccessFully", Toast.LENGTH_LONG);
             Log.d("Inside btnFinishClick", "onClick End");
             Intent intent = new Intent(getApplicationContext(), FirstPage.class);
             startActivity(intent);

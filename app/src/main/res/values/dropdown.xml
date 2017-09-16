@@ -102,7 +102,7 @@
 <string-array name="Communication">
     <item>Yearly</item>
     <item>Monthly</item>
-    <item>Weakly</item>
+    <item>Weekly</item>
     <item>Once a Day</item>
     <item>More then Once a day</item>
 </string-array>
@@ -124,7 +124,6 @@
     <item>Movie</item>
     <item>Jokes</item>
     <item>Relationship</item>
-    <item>Music</item>
     <item>Other</item>
 </string-array>
 

@@ -34,7 +34,24 @@ class MySpinnerListener implements View.OnClickListener
         this.selectedText = selectedText;
         this.btn = btn;
     }
+//This is second version of Ctor for modify profile call
+    MySpinnerListener(Context appContext, String[] listItems,  StringBuilder selectedText, Button btn, boolean []existingCheckedItems )
+    {
+        cnt = appContext;
+        this.listItems = listItems;
 
+        checkedItems = new boolean[listItems.length];
+        checkedItems = existingCheckedItems;
+        Title =  btn.getText().toString();
+        this.selectedText = selectedText;
+        this.btn = btn;
+        //Initializing mUserItem for checked items
+        for(int i =0 ; i < checkedItems.length;i++)
+        {
+            if(checkedItems[i]==true)
+                mUserItems.add(i);
+        }
+    }
     void setLable()
     {
         if(!mUserItems.isEmpty())

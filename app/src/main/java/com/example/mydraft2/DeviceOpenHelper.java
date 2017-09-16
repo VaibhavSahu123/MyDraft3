@@ -51,6 +51,12 @@ class DeviceOpenHelper extends SQLiteOpenHelper {
     }
 */
 
+    public boolean delete(String table, String whereColumn , String[] values )
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        return db.delete(table, whereColumn , values) > 0;
+    }
+
     public void deviceInsert(String table, String nullColumnHack, ContentValues values)
     {
         SQLiteDatabase db = getWritableDatabase();
