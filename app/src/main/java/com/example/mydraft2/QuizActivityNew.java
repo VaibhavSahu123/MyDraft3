@@ -3,6 +3,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,21 +16,32 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.AbsoluteSizeSpan;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static android.R.attr.textAppearanceLarge;
 import static android.support.v7.cardview.R.color.cardview_dark_background;
 import static android.support.v7.cardview.R.color.cardview_light_background;
+import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
 import static com.example.mydraft2.R.attr.windowActionBar;
 
 /**
@@ -57,7 +69,17 @@ public class QuizActivityNew extends AppCompatActivity {
     final DbUtility dbUtility = new DbUtility();
     public static final String TAG = "QUIZ";
     public static Cursor queryResult = null;
-    public static List<Integer> OptionSelected = new ArrayList<Integer>(Collections.nCopies(QuestionCount, -1));
+    //public static List<List<Integer>> OptionSelected = new ArrayList<List<Integer>>(Collections.nCopies(QuestionCount, -1));
+    public static List<List<Integer>> OptionSelected = new ArrayList<List<Integer>>();
+    static
+    {
+        for(int i=0; i< QuestionCount;i++)
+        {
+            List<Integer> innerList = new ArrayList<Integer>();
+            OptionSelected.add(innerList);
+        }
+
+    }
     String profileName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +116,7 @@ public class QuizActivityNew extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Swap right to left to go next question", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Swap to go next question", Snackbar.LENGTH_SHORT)
                         .setAction("Action", null).show();
             }
         });
@@ -144,28 +166,20 @@ public class QuizActivityNew extends AppCompatActivity {
     {
         int result =0;
         int QuestionAttempted = 0;
-        for(int value : OptionSelected)
+        for(List<Integer> value : OptionSelected)
         {
-            switch(value)
-            {
-                case -1:
-                    break;
-                case 1 :
-                    result += queryResult.getInt(6); //OptWeight1
-                    QuestionAttempted++;
-                    break;
-                case 2:
-                    result += queryResult.getInt(7); //OptWeight2
-                    QuestionAttempted++;
-                    break;
-                case 3 :
-                    result += queryResult.getInt(8); //OptWeight3
-                    QuestionAttempted++;
-                    break;
-                case 4:
-                    result += queryResult.getInt(9); //OptWeight4
-                    QuestionAttempted++;
-                    break;
+            if(value==null) //No question answered for this
+                continue;
+
+            QuestionAttempted++; //Else question attempted
+
+            for(int i=0;i<value.size();i++) {
+                {
+                 String weightageColumnName = "opt"+(i+1)+"Weightage";
+                    result += queryResult.getInt(queryResult.getColumnIndex(weightageColumnName)); //OptWeight2
+                }
+                //Clear exiting value so that if someone click back it should not use old values
+                value.clear();
             }
 
         }
@@ -190,10 +204,13 @@ public class QuizActivityNew extends AppCompatActivity {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static final String Question = "Question";
-        private static final String Option1 = "Option1";
+        private static final String OPTIONARRAYLIST = "OptionArrayList";
+        private static final String OPTIONCOUNT = "OptionCount";
+        private static final String ISMULTICHOICEQUESION = "IsMultiChoiceQuestion";
+        /*private static final String Option1 = "Option1";
         private static final String Option2 = "Option2";
         private static final String Option3 = "Option3";
-        private static final String Option4 = "Option4";
+        private static final String Option4 = "Option4";*/
         private static final String POSITION = "Position";
 
 
@@ -208,13 +225,35 @@ public class QuizActivityNew extends AppCompatActivity {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             queryResult.moveToPosition(sectionNumber-1);
+            int OptionCount = queryResult.getInt(queryResult.getColumnIndex(DbUtility.NUMBEROFOPTIONS));
+            int isMultiChoiceQuestion = queryResult.getInt(queryResult.getColumnIndex(DbUtility.MULTICHOICEQUESTION));
+            ArrayList<String> optionArrayList = new ArrayList<String>();
+            for(Integer i =1;i<=OptionCount;i++)
+            {
+                String OptionNumber = "option"+ Integer.toString(i);
+                Log.d(TAG,"Option Name ["+OptionNumber+"]");
+                String Value = queryResult.getString(queryResult.getColumnIndex(OptionNumber));
+                if(!Value.isEmpty())
+                {
+                    Log.d(TAG,"Value is ["+Value+"]");
+                    optionArrayList.add(Value);
+                }
+            }
 
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            args.putString(Question,queryResult.getString(1));
-            args.putString(Option1,queryResult.getString(2));
-            args.putString(Option2,queryResult.getString(3));
-            args.putString(Option3,queryResult.getString(4));
-            args.putString(Option4,queryResult.getString(5));
+            Log.d(TAG,"ARG section number is "+ sectionNumber);
+
+            String QuestionText = queryResult.getString(queryResult.getColumnIndex(DbUtility.QUESTION));
+
+            args.putString(Question,QuestionText);
+            args.putStringArrayList(OPTIONARRAYLIST,optionArrayList);
+            args.putInt(OPTIONCOUNT,OptionCount);
+            args.putInt(ISMULTICHOICEQUESION,isMultiChoiceQuestion);
+
+           /* args.putString(Option1,queryResult.getString(queryResult.getColumnIndex(DbUtility.OPTION1)));
+            args.putString(Option2,queryResult.getString(queryResult.getColumnIndex(DbUtility.OPTION2)));
+            args.putString(Option3,queryResult.getString(queryResult.getColumnIndex(DbUtility.OPTION3)));
+            args.putString(Option4,queryResult.getString(queryResult.getColumnIndex(DbUtility.OPTION4)));*/
 
             fragment.setArguments(args);
             return fragment;
@@ -224,177 +263,284 @@ public class QuizActivityNew extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_quiz, container, false);
+            LinearLayout QuizLayout = (LinearLayout) rootView.findViewById(R.id.OptionsLayout);
+            //VS added for testing
+            Log.d(TAG,"OnCreateView called");
+            AddCardView(QuizLayout,savedInstanceState);
 
             populateQuestions(rootView,savedInstanceState);
 
-            setListenters(rootView);
-            return rootView;
+            setListenters(rootView,savedInstanceState);
+
+                      return rootView;
         }
 
-        private void setListenters(View rootView)
+        private void AddCardView(LinearLayout QuizLayout, Bundle savedInstanceState)
         {
-            CardView Option1Card = (CardView) rootView.findViewById(R.id.Opt1Card);
-            CardView Option2Card = (CardView) rootView.findViewById(R.id.Opt2Card);
-            CardView Option3Card = (CardView) rootView.findViewById(R.id.Opt3Card);
-            CardView Option4Card = (CardView) rootView.findViewById(R.id.Opt4Card);
+            int Position = getArguments().getInt(ARG_SECTION_NUMBER);
+            Log.d(TAG,"Position is "+ Position);
+            ArrayList<String> optionList = getArguments().getStringArrayList(OPTIONARRAYLIST);
+            for(int i=0;i<optionList.size();i++)
+            {
+                CardView card = new CardView(getContext());
 
-            Option1Card.setOnClickListener(new option1Listener());
-            Option2Card.setOnClickListener(new option2Listener());
-            Option3Card.setOnClickListener(new option3Listener());
-            Option4Card.setOnClickListener(new option4Listener());
+                // Set the CardView layoutParams
+                LayoutParams params = new LayoutParams(
+                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(0, 30, 0, 0);
+                card.setLayoutParams(params);
+
+                // Set CardView corner radius
+                card.setRadius(4);
+
+                // Set cardView content padding
+                //   card.setContentPadding(15, 15, 15, 15);
+
+                //make it clickable
+                card.setClickable(true);
+
+                //set ID
+              //  String ID = "Opt"+i+"Card";
+                if(i==0)
+                    card.setId(R.id.Opt1Card);
+                else if(i==1)
+                    card.setId(R.id.Opt2Card);
+                else if(i==2)
+                    card.setId(R.id.Opt3Card);
+                else if(i==3)
+                    card.setId(R.id.Opt4Card);
+                else if(i==4)
+                    card.setId(R.id.Opt5Card);
+                else if(i==5)
+                    card.setId(R.id.Opt6Card);
+                else if(i==6)
+                    card.setId(R.id.Opt7Card);
+                else if(i==7)
+                    card.setId(R.id.Opt8Card);
+                else if(i==8)
+                    card.setId(R.id.Opt9Card);
+                else if(i==9)
+                    card.setId(R.id.Opt10Card);
+                else if(i==10)
+                    card.setId(R.id.Opt11Card);
+                else if(i==11)
+                    card.setId(R.id.Opt12Card);
+                // Set a background color for CardView
+                card.setCardBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+                // card.setCardBackgroundColor(getResources().getColor(R.color.cardview_light_background));
+
+                // Set the CardView maximum elevation
+                //card.setMaxCardElevation(15);
+
+                // Set CardView elevation
+                //card.setCardElevation(9);
+
+                // Initialize a new TextView to put in CardView
+                TextView tv = new TextView(getContext());
+                LayoutParams TextLayoutparams = new LayoutParams(
+                        LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT
+                );
+                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                tv.setLayoutParams(params);
+                tv.setText(optionList.get(i));
+                tv.setTextAppearance(getContext(), android.R.style.TextAppearance_Large);
+                tv.setTextColor(Color.MAGENTA);
+                // Put the TextView in CardView
+                card.addView(tv);
+
+                // Finally, add the CardView in root layout
+                QuizLayout.addView(card);
+            }
+        }
+        private void setListenters(View rootView, Bundle savedInstanceState)
+        {
+            int optCount = getArguments().getInt(OPTIONCOUNT);
+            int IsMultiChoiceQuestion = getArguments().getInt(ISMULTICHOICEQUESION);
+           // Log.d(TAG,"Optcount is "+optCount);
+            CardView OptionCard[] = new CardView[optCount];
+            for (int i=0;i < optCount;i++)
+            {
+                String ID = "Opt"+(i+1)+"Card";
+                int resId = getResources().getIdentifier(ID,"id", getContext().getPackageName());
+                //Log.d(TAG,"Optcount is "+optCount+" Res id is "+ resId +" ID "+ ID);
+                OptionCard[i] = (CardView) rootView.findViewById(resId);
+                OptionCard[i].setOnClickListener(new optionListener((i+1),IsMultiChoiceQuestion,OptionCard));
+            }
+//            CardView Option1Card = (CardView) rootView.findViewById(R.id.Opt1Card);
+//            CardView Option2Card = (CardView) rootView.findViewById(R.id.Opt2Card);
+//            CardView Option3Card = (CardView) rootView.findViewById(R.id.Opt3Card);
+//            CardView Option4Card = (CardView) rootView.findViewById(R.id.Opt4Card);
+//
+//            Option1Card.setOnClickListener(new option1Listener());
+//            Option2Card.setOnClickListener(new option2Listener());
+//            Option3Card.setOnClickListener(new option3Listener());
+//            Option4Card.setOnClickListener(new option4Listener());
         }
 
-        class option1Listener implements  View.OnClickListener
+        class optionListener implements  View.OnClickListener
         {
+            int optNumber;
+            int isMultiChoiceQuestion;
+            CardView[] optionCard;
+
+            public optionListener(int optNumber, int isMultiChoiceQuestion, CardView[] optionCard)
+            {
+                this.isMultiChoiceQuestion=isMultiChoiceQuestion;
+                this.optNumber=optNumber;
+                this.optionCard=optionCard;
+
+            }
+
             @Override
             public void onClick(View v)
             {
-               // int position = PageListener.currentposition+1;
+                // int position = PageListener.currentposition+1;
                 int position = PageListener.currentposition +1;
                 View vRootView=  mViewPager.findViewWithTag("myView"+ position);
-                Log.d(TAG , "Page onclick opt 1 myView "+ position );
-
-                // based on the current position you can then cast the p
-                CardView C1 = (CardView) v.findViewById(R.id.Opt1Card);
-                CardView C2 = (CardView) vRootView.findViewById(R.id.Opt2Card);
-                CardView C3 = (CardView) vRootView.findViewById(R.id.Opt3Card);
-                CardView C4 = (CardView) vRootView.findViewById(R.id.Opt4Card);
+                Log.d(TAG , "Page onclick opt "+ optNumber + "myView "+ position );
+                printOptionSelected();
 
                 //Setting CardView as clicked
-                C1.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
+                for(int i =0; i < optionCard.length;i++)
+                {
+                    if(optNumber==(i+1))//if selected position then mark dark else
+                    {
+                        //denotes Option selected for this page , this index starts from ZERo so no doing currentposition+1
+                        List<Integer> OptionValues = OptionSelected.get(PageListener.currentposition);
+
+                            if(isMultiChoiceQuestion ==1)
+                            {
+                                //In case of multi choice if options re-clicked then un select that & remove from result
+                                if(OptionValues.contains(i+1))
+                                {
+                                    optionCard[i].setCardBackgroundColor(getResources().getColor(cardview_light_background));
+                                    OptionValues.remove(new Integer(i+1)); //remove Int object 
+                                }
+                                else {
+                                    optionCard[i].setCardBackgroundColor(getResources().getColor(cardview_dark_background));
+                                    OptionValues.add((i + 1)); //In case of mulichoice add
+                                }
+                            }
+                            else
+                            {
+                                OptionValues.clear();//Else first remove earlier entry then add
+                                optionCard[i].setCardBackgroundColor(getResources().getColor(cardview_dark_background));
+                                OptionValues.add((i+1));
+                            }
+
+                    }
+                    else if(isMultiChoiceQuestion!=1)
+                    {
+                        //Un setting other view
+                        optionCard[i].setCardBackgroundColor(getResources().getColor(cardview_light_background));
+                    }
+                }
+                /*C1.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
 
                 //Un setting other view
                 C2.setCardBackgroundColor(getResources().getColor(cardview_light_background));
                 C3.setCardBackgroundColor(getResources().getColor(cardview_light_background));
                 C4.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-
-                //denotes Option1 selected for this page , this index starts from ZERo so no doing currentposition+1
-                OptionSelected.set(PageListener.currentposition,1);
-            }
+*/
+                printOptionSelected();
+                            }
         }
-        class option2Listener implements  View.OnClickListener
+
+        void printOptionSelected()
         {
-            @Override
-            public void onClick(View v)
+            String Values ;
+            for(int i =0 ; i < QuestionCount;i++)
             {
-                int position = PageListener.currentposition+1;
-                View vRootView=  mViewPager.findViewWithTag("myView"+ position);
-                Log.d(TAG , "Page onclick opt 2 myView "+ position );
-
-                CardView C1 = (CardView) vRootView.findViewById(R.id.Opt1Card);
-                CardView C2 = (CardView) v.findViewById(R.id.Opt2Card);
-                CardView C3 = (CardView) vRootView.findViewById(R.id.Opt3Card);
-                CardView C4 = (CardView) vRootView.findViewById(R.id.Opt4Card);
-
-                //Setting CardView as clicked
-                C2.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-
-                //Un setting other view
-                C1.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C3.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C4.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-
-                //denotes Option2 selected for this page,this index starts from ZERo so no doing currentposition+1
-                OptionSelected.set(PageListener.currentposition,2);
-
-            }
-        }
-        class option3Listener implements  View.OnClickListener
-        {
-            @Override
-            public void onClick(View v)
-            {
-                int position = PageListener.currentposition+1;
-                View vRootView=  mViewPager.findViewWithTag("myView"+ position);
-                Log.d(TAG , "Page onclick opt 3 myView "+ position );
-                CardView C1 = (CardView) vRootView.findViewById(R.id.Opt1Card);
-                CardView C2 = (CardView) vRootView.findViewById(R.id.Opt2Card);
-                CardView C3 = (CardView) v.findViewById(R.id.Opt3Card);
-                CardView C4 = (CardView) vRootView.findViewById(R.id.Opt4Card);
-
-                //Setting CardView as clicked
-                C3.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-
-                //Un setting other view
-                C1.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C2.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C4.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-
-                //denotes Option3 selected for this page,this index starts from ZERo so no doing currentposition+1
-                OptionSelected.set(PageListener.currentposition,3);
-
+                Values = "At Index "+i+" ==>";
+                List<Integer> tempList = OptionSelected.get(i);
+                for(int j =0 ; j<tempList.size();j++)
+                {
+                    Values += ", "+tempList.get(j);
+                }
+                Log.d(TAG,Values);
             }
         }
 
-        class option4Listener implements  View.OnClickListener
-        {
-            @Override
-            public void onClick(View v)
-            {
-                int position = PageListener.currentposition+1;
-                View vRootView=  mViewPager.findViewWithTag("myView"+ position);
-                Log.d(TAG , "Page onclick opt 4 myView "+ position );
-                CardView C1 = (CardView) vRootView.findViewById(R.id.Opt1Card);
-                CardView C2 = (CardView) vRootView.findViewById(R.id.Opt2Card);
-                CardView C3 = (CardView) vRootView.findViewById(R.id.Opt3Card);
-                CardView C4 = (CardView) v.findViewById(R.id.Opt4Card);
-
-                //Setting CardView as clicked
-                C4.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-
-                //Un setting other view
-                C1.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C2.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-                C3.setCardBackgroundColor(getResources().getColor(cardview_light_background));
-
-                //denotes Option4 selected for this page,this index starts from ZERo so no doing currentposition+1
-                OptionSelected.set(PageListener.currentposition,4);
-            }
-        }
+//        class option4Listener implements  View.OnClickListener
+//        {
+//            @Override
+//            public void onClick(View v)
+//            {
+//                int position = PageListener.currentposition+1;
+//                View vRootView=  mViewPager.findViewWithTag("myView"+ position);
+//                Log.d(TAG , "Page onclick opt 4 myView "+ position );
+//                CardView C1 = (CardView) vRootView.findViewById(R.id.Opt1Card);
+//                CardView C2 = (CardView) vRootView.findViewById(R.id.Opt2Card);
+//                CardView C3 = (CardView) vRootView.findViewById(R.id.Opt3Card);
+//                CardView C4 = (CardView) v.findViewById(R.id.Opt4Card);
+//
+//                //Setting CardView as clicked
+//                C4.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
+//
+//                //Un setting other view
+//                C1.setCardBackgroundColor(getResources().getColor(cardview_light_background));
+//                C2.setCardBackgroundColor(getResources().getColor(cardview_light_background));
+//                C3.setCardBackgroundColor(getResources().getColor(cardview_light_background));
+//
+//                //denotes Option4 selected for this page,this index starts from ZERo so no doing currentposition+1
+//                OptionSelected.set(PageListener.currentposition,4);
+//            }
+//        }
         private void populateQuestions(View rootView, Bundle savedInstanceState)
         {
             TextView questionText = (TextView) rootView.findViewById(R.id.QuestionText);
-            TextView option1Text = (TextView) rootView.findViewById(R.id.Option1Text);
-            TextView option2Text = (TextView) rootView.findViewById(R.id.Option2Text);
-            TextView option3Text = (TextView) rootView.findViewById(R.id.Option3Text);
-            TextView option4Text = (TextView) rootView.findViewById(R.id.Option4Text);
+            Integer IsMultiChoice = getArguments().getInt(ISMULTICHOICEQUESION);
+            String questionOnly = getArguments().getString(Question);
 
-            questionText.setText(getArguments().getString(Question));
-            option1Text.setText(getArguments().getString(Option1));
-            option2Text.setText(getArguments().getString(Option2));
-            option3Text.setText(getArguments().getString(Option3));
-            option4Text.setText(getArguments().getString(Option4));
+            CharSequence  question = getQuestionTextFormatted(questionOnly,IsMultiChoice);
 
+            questionText.setText(question);
             int Position = getArguments().getInt(ARG_SECTION_NUMBER);
             //setting tag so that later on can be used for retriving view
             rootView.setTag("myView"+Position);
             Log.d(TAG , "ONcreate view myView"+ Position );
             //If not -1 then one of the option was selected before view got recycle
-            Integer OptionEarlierSelcted = OptionSelected.get(Position-1);
-            if (OptionEarlierSelcted!= -1)
+            List<Integer> OptionEarlierSelcted = OptionSelected.get(Position-1);
+            Log.d(TAG , "AT "+ Position +" Size is "+ OptionEarlierSelcted.size());
+            if (OptionEarlierSelcted!=null)
             {
-                switch (OptionEarlierSelcted)
+                for(int i =0 ;i < OptionEarlierSelcted.size();i++)
                 {
-                    case 1 :
-                        CardView C1 = (CardView) rootView.findViewById(R.id.Opt1Card);
-                        C1.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-                        break;
-               case 2 :
-                        CardView C2 = (CardView) rootView.findViewById(R.id.Opt2Card);
-                        C2.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-                   break;
-               case 3 :
-                        CardView C3 = (CardView) rootView.findViewById(R.id.Opt3Card);
-                        C3.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-                   break;
-               case 4 :
-                        CardView C4 = (CardView) rootView.findViewById(R.id.Opt4Card);
-                        C4.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
-                   break;
+                    String ID = "Opt"+OptionEarlierSelcted.get(i)+"Card";
+                    int resId = getResources().getIdentifier(ID,"id",getContext().getPackageName());
+                    CardView SelectedOption = (CardView) rootView.findViewById(resId);
+                    SelectedOption.setCardBackgroundColor(getResources().getColor(cardview_dark_background));
                 }
             }
 
           }
+
+        private CharSequence getQuestionTextFormatted(String questionOnly, Integer isMultiChoice)
+        {
+            String tip ;
+            int largeText = getResources().getDimensionPixelSize(R.dimen.large_text);
+            int mediumText = getResources().getDimensionPixelSize(R.dimen.medium_text);
+
+            if(isMultiChoice==1)
+            {
+                tip="(Select one or more options)";
+            }
+            else
+            {
+                tip ="(Selet anyone option)";
+            }
+
+            SpannableString span1 = new SpannableString(questionOnly);
+            span1.setSpan(new AbsoluteSizeSpan(largeText), 0, questionOnly.length(), SPAN_INCLUSIVE_INCLUSIVE);
+
+            SpannableString span2 = new SpannableString(tip);
+            span2.setSpan(new AbsoluteSizeSpan(mediumText), 0, tip.length(), SPAN_INCLUSIVE_INCLUSIVE);
+
+// let's put both spans together with a separator and all
+            CharSequence finalText = TextUtils.concat(span1, " ", span2);
+            return finalText;
+        }
     }
 
     /**

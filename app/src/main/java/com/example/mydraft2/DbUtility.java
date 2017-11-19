@@ -56,6 +56,19 @@ public class DbUtility
     //Constant USed
     static final String dateFormat = "dd/MM/yy";
 
+    //Question Table Constant
+    static final String QUESTION="question";
+    static final String OPTION1 = "option1";
+    static final String OPTION2 = "option2";
+    static final String OPTION3 = "option3";
+    static final String OPTION4 = "option4";
+    static final String OPT1WEIGHTAGE="opt1Weightage";
+    static final String OPT2WEIGHTAGE="opt2Weightage";
+    static final String OPT3WEIGHTAGE="opt3Weightage";
+    static final String OPT4WEIGHTAGE="opt4Weightage";
+    static final String NUMBEROFOPTIONS ="NumberOfOptions";
+    static final String MULTICHOICEQUESTION = "multichoiceQuestion";
+
     public DbUtility()
     {
 

@@ -44,6 +44,7 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.line_graph_result);
         profileName = getIntent().getStringExtra("SelectedProfile");
         Log.d(TAG," ProfileName is " + profileName);

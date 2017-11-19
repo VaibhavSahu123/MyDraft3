@@ -1,4 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="action_settings" type="id">settings</item>
+    <item name="Option1" type="id"/>
+    <item name="Opt1Card" type="id" />
+    <item name="Opt2Card" type="id" />
+    <item name="Opt3Card" type="id" />
+    <item name="Opt4Card" type="id" />
+    <item name="Opt5Card" type="id" />
+    <item name="Opt6Card" type="id" />
+    <item name="Opt7Card" type="id" />
+    <item name="Opt8Card" type="id" />
+    <item name="Opt9Card" type="id" />
+    <item name="Opt10Card" type="id" />
+    <item name="Opt11Card" type="id" />
+    <item name="Opt12Card" type="id" />
 </resources>

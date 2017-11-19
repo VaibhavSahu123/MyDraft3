@@ -1,25 +1,33 @@
 create table user_details (userId integer primary key autoincrement , firstName text , lastName text,occupation text, gender text, userName text ,password text );
-create table questions (questionId integer primary key autoincrement , question text , option1 text,option2 text , option3 text, option4 text ,
-opt1Weightage integer , opt2Weightage integer ,opt3Weightage integer,opt4Weightage integer ,
-relationType text);
+
+create table questions (questionId integer primary key autoincrement , question text , option1 text,option2 text , option3 text, option4 text
+,option5 text,option6 text , option7 text, option8 text,option9 text,option10 text , option11 text, option12 text,opt1Weightage integer , opt2Weightage integer ,opt3Weightage integer,opt4Weightage integer,opt5Weightage integer , opt6Weightage integer ,opt7Weightage integer,opt8Weightage integer ,opt9Weightage integer , opt10Weightage integer ,opt11Weightage integer,opt12Weightage integer ,relationType text,multichoiceQuestion integer, NumberOfOptions integer);
+
+
 create table profiles (profileId integer primary key autoincrement , firstName text , lastName text , gender text, marriedStatus text , age number ,occupation text, interest text, hobbies text , religion text , country text , howKnowHim text, howClose text , commFrequency text , commTopic text,relationTye text );
 create table results ( resultDate text , result integer, profileName text , userName text );
 
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "Have you heard anything about him/her ?","Positive","Negative","Rumour","None",25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,option5,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,opt5Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "Have you heard anything about him/her ?","Positive","Negative","Rumour","Factual","None",20,10,15,10,5,"ALL",
+0,5);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "How many times did you meet/talk/texted him/her this week ?","Zero","Once","Between 1 to 7 times", "More then 7 Times",25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "How many times did you meet/talk/texted him/her this week ?","Zero","Once","Between 1 to 7 times", "More then 7 Times",25,50,75,100,"ALL",0,4);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "What was the main topic of conversation ?","Politics","Hobbies & Interest","RelationShip", "Other",25,50,75,100,"ALL");
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "Mutual Agreement?","less then 25%","between 25-50%","between 50-75%","more then 75%", 25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "Mutual Agreement?","less then 25%","between 25-50%","between 50-75%","more then 75%", 25,50,75,100,"ALL",0,4);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "Fun of conversation ?","less then 25%","between 25-50%","between 50-75%","more then 75%",25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "Fun of conversation ?","less then 25%","between 25-50%","between 50-75%","more then 75%",25,50,75,100,"ALL",0,4);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "what frequency you want to meet this week ?","doesn't matter","less often","more often", "same as last",25,50,100,75,"ALL");
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "How much did you laugh ?","less then 25%","between 25-50%","between 50-75%","more then 75%",25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,option5,option6,option7,option8,option9,option10,option11,option12,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,opt5Weightage ,opt6Weightage,opt7Weightage ,opt8Weightage,opt9Weightage ,opt10Weightage,opt11Weightage,opt12Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "What do you like most in talk with him/her ?","Laughters","Sense of Humour","Person's intelligece","Problem Solving","Personality","Funny inclination","Figures of speech","Religious approach","Motivational","Inspirational","Creativity","Convincing capability",10,10,15,5,10,10,10,10,15,5,5,5,"ALL",1,12);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "Concerns in talk ?","Thinking Not matching","Attitude problem ","Lack of interest in topic", "None",25,50,75,100,"ALL");
+insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "what frequency you want to meet this week ?","doesn't matter","less often","more often", "same as last",25,50,100,75,"ALL",0,4);
 
-insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType) values (  "What do you like most in talk with him ?","Empathetic Nature","Same Opinion","Fun part of talk", "None",75,50,100,25,"ALL");
+insert into questions (question,option1,option2,option3,option4,option5,option6,option7,option8,option9,option10,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,opt5Weightage ,opt6Weightage,opt7Weightage ,opt8Weightage,opt9Weightage ,opt10Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "Concerns in talk ?","Thinking Not matching","Attitude problem ","Lack of interest in topic","Struggling to find topic","Circumstantial issues","Timing issues","Misunderstanding","Blame Game","Intense arguments","None",10,10,15,5,10,10,10,10,15,5,"ALL",1,10);
+
+insert into questions (question,option1,option2,option3,option4,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,relationType,multichoiceQuestion,NumberOfOptions)
+values (  "How much did you laugh ?","less then 25%","between 25-50%","between 50-75%","more then 75%",25,50,75,100,"ALL",0,4);
+
+
+
+insert into questions (question,option1,option2,option3,option4,option5,option6,option7,option8,option9,option10,option11,option12,opt1Weightage ,opt2Weightage,opt3Weightage,opt4Weightage,opt5Weightage,opt6Weightage,opt7Weightage,opt8Weightage,opt9Weightage ,opt10Weightage,opt11Weightage,opt12Weightage,relationType,multichoiceQuestion,NumberOfOptions) values (  "What was the main topic of conversation ?","Politics","Hobbies", "Interest","RelationShip", "Bollywood","Religion","Sports","TV","Jokes","Books","Economy","Romance",25,50,75,100,10,1,2,3,4,5,6,7,"ALL",1,12);
